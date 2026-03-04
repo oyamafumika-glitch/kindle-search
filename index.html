@@ -3,238 +3,196 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kindle セール検索（完成版）</title>
+  <title>Kindleセール検索（割引本だけ）</title>
   <style>
-    :root{--b:#d9d9d9;--bg:#fff;--bg2:#f6f6f6;--t:#111;--m:#666;--r:14px;--gap:10px}
+    :root{--b:#ddd;--bg:#fff;--bg2:#f6f6f6;--t:#111;--m:#666;--r:14px;--g:10px}
     *{box-sizing:border-box}
-    body{margin:0;padding:18px;max-width:980px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color:var(--t);background:var(--bg)}
+    body{margin:0;padding:18px;max-width:980px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;color:var(--t);background:var(--bg)}
     h1{font-size:20px;margin:0 0 10px}
-    h2{font-size:15px;margin:0 0 8px}
     .card{border:1px solid var(--b);border-radius:var(--r);padding:14px;margin:12px 0;background:#fff}
     label{display:block;font-size:13px;margin:10px 0 6px}
     input,select,button{width:100%;padding:10px;font-size:16px;border:1px solid #cfcfcf;border-radius:12px;background:#fff}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
-    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--gap)}
-    .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:var(--g)}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--g)}
+    .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:var(--g);margin-top:12px}
     button{cursor:pointer;border:1px solid #bbb}
     button.primary{background:#111;color:#fff;border-color:#111}
     button.ghost{background:var(--bg2)}
-    .muted{color:var(--m);font-size:12px;line-height:1.55}
-    .preview{border:1px solid var(--b);border-radius:12px;padding:10px;background:var(--bg2);overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px}
+    .muted{color:var(--m);font-size:12px;line-height:1.55;margin-top:10px}
+    .preview{border:1px solid var(--b);border-radius:12px;padding:10px;background:var(--bg2);overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
     @media (max-width:820px){body{padding:14px}.row,.row3,.btnrow{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 
-<h1>Kindle セール検索（完成版）</h1>
+<h1>Kindleセール検索（割引本だけ / きんぽめ連携）</h1>
 
 <div class="card">
-  <h2>検索条件</h2>
-
   <div class="row">
     <div>
-      <label>キーワード（作者名/出版社名/作品名など）</label>
-      <input id="kw" placeholder="例：東野圭吾 / 技術評論社 / ミステリ" />
+      <label>キーワード（作者/出版社/作品名など）</label>
+      <input id="keyword" placeholder="例：東野圭吾 / 技術評論社 / ミステリ" />
     </div>
-
     <div>
-      <label>カテゴリ（Amazon全ジャンル対応：検索付き）</label>
-      <input id="genreSearch" list="genreList" placeholder="カテゴリ名で検索（例：ミステリー）" />
-      <datalist id="genreList"></datalist>
-      <div class="muted">※候補は <code>genres.json</code> から読み込みます。全ジャンルを入れたい場合は genres.json に name/node を追加してください。</div>
+      <label>除外キーワード（KU除外など）</label>
+      <input id="ex" value="Kindle Unlimited 読み放題" />
+      <div class="muted">ここに入れた語を含む結果を除外します（スペース区切り）。</div>
     </div>
   </div>
 
   <div class="row3">
     <div>
-      <label>割引率</label>
-      <select id="pct">
+      <label>カテゴリ</label>
+      <select id="cat">
         <option value="">指定なし</option>
-        <option value="10-">10%以上</option>
-        <option value="30-">30%以上</option>
-        <option value="50-">50%以上</option>
-        <option value="70-">70%以上</option>
-        <option value="90-">90%以上</option>
-        <option value="30-50">30〜50%</option>
-        <option value="50-70">50〜70%</option>
+        <option>文学・評論</option>
+        <option>人文・思想</option>
+        <option>社会・政治</option>
+        <option>ノンフィクション</option>
+        <option>歴史・地理</option>
+        <option>ビジネス・経済</option>
+        <option>投資・金融・会社経営</option>
+        <option>科学・テクノロジー</option>
+        <option>医学・薬学</option>
+        <option>コンピュータ・IT</option>
+        <option>アート・建築・デザイン</option>
+        <option>実用・ホビー</option>
+        <option>スポーツ・アウトドア</option>
+        <option>資格・検定</option>
+        <option>暮らし・健康・子育て</option>
+        <option>旅行ガイド・マップ</option>
+        <option>語学・辞事典・年鑑</option>
+        <option>教育・学参・受験</option>
+        <option>絵本・児童書</option>
+        <option>Kindle マンガ</option>
+        <option>ライトノベル</option>
+        <option>ボーイズラブ</option>
+        <option>ティーンズラブ</option>
+        <option>タレント写真集</option>
+        <option>エンターテイメント</option>
+        <option>楽譜・スコア・音楽書</option>
+        <option>雑誌</option>
+        <option>Kindle洋書</option>
       </select>
-      <div class="muted">※URLに <code>pct-off=50-</code> 形式で付与します（Amazon側の都合で効きが弱い検索もあります）。</div>
     </div>
 
     <div>
-      <label>ポイント還元（プルダウン）</label>
-      <select id="points"></select>
-      <div class="muted">※中身は <code>points.json</code> から読み込みます。</div>
+      <label>値引率（%OFF）</label>
+      <div class="row">
+        <input id="lprr" type="number" min="0" max="100" placeholder="下限 例:30" />
+        <input id="hprr" type="number" min="0" max="100" placeholder="上限 例:100" />
+      </div>
     </div>
 
     <div>
-      <label>価格帯</label>
-      <select id="price">
-        <option value="">指定なし</option>
-        <option value="p_36:-0">無料（0円）</option>
-        <option value="p_36:0-100000">〜1000円</option>
-        <option value="p_36:6400-44000">約64〜440円</option>
-        <option value="p_36:10000-">100円以上</option>
-      </select>
+      <label>ポイント還元率（%）</label>
+      <div class="row">
+        <input id="lptr" type="number" min="0" max="100" placeholder="下限 例:10" />
+        <input id="hptr" type="number" min="0" max="100" placeholder="上限 例:100" />
+      </div>
     </div>
   </div>
 
-  <div class="row">
+  <div class="row3">
     <div>
-      <label>並び順</label>
-      <select id="sort">
-        <option value="price-asc-rank">価格：安い順</option>
-        <option value="price-desc-rank">価格：高い順</option>
-        <option value="review-rank">評価が高い順</option>
-        <option value="exact-aware-popularity-rank">人気順</option>
-        <option value="date-desc-rank">新着順</option>
-      </select>
+      <label>価格（円）</label>
+      <div class="row">
+        <input id="lpr" type="number" min="0" placeholder="下限 例:1" />
+        <input id="hpr" type="number" min="0" placeholder="上限 例:500" />
+      </div>
+      <div class="muted">無料を除外したいなら下限を 1 に。</div>
     </div>
+
     <div>
-      <label>開き方</label>
-      <select id="openMode">
-        <option value="newtab">新しいタブで開く</option>
-        <option value="same">このタブで開く</option>
+      <label>実質値引率（%OFF）</label>
+      <div class="row">
+        <input id="lrpr" type="number" min="0" max="100" placeholder="下限" />
+        <input id="hrpr" type="number" min="0" max="100" placeholder="上限" />
+      </div>
+    </div>
+
+    <div>
+      <label>並び替え</label>
+      <select id="st">
+        <option value="">指定なし</option>
+        <option value="popular">人気順</option>
+        <option value="realrate">実質値引率の高い順</option>
+        <option value="pointhigh">ポイント還元額の高い順</option>
+        <option value="pointrate">ポイント還元率の高い順</option>
+        <option value="rate">値引率の高い順</option>
+        <option value="discount">値引額の高い順</option>
+        <option value="priceasc">価格の安い順</option>
+        <option value="pricedesc">価格の高い順</option>
       </select>
+      <div class="muted">※サイト側の並び替え名称に依存します（動きが変わったら調整します）。</div>
     </div>
   </div>
 
   <div class="btnrow">
-    <button class="primary" id="go">Amazonで開く</button>
+    <button class="primary" id="go">セール検索を開く</button>
     <button class="ghost" id="copy">URLをコピー</button>
   </div>
 
   <label style="margin-top:12px;">生成URL</label>
   <div class="preview" id="preview"></div>
 
-  <p class="muted" style="margin-top:10px">
-    KUについて：Amazon検索には「KUを除外する」条件がないため、URL条件だけでKUを完全に排除はできません。<br>
-    nodeの調べ方：カテゴリページのURLに出る <code>node=xxxxx</code> を使います。:contentReference[oaicite:2]{index=2}
-  </p>
+  <div class="muted">
+    このツールは「きんぽめ」の検索URL（<code>kindle-sale-search2</code>）を組み立てます。パラメータ例：<code>?cat=&amp;ex=&amp;keyword=&amp;lpr=&amp;hpr=&amp;lprr=&amp;hprr=&amp;lptr=&amp;hptr=&amp;lrpr=&amp;hrpr=&amp;rds=&amp;rde=&amp;st=</code> :contentReference[oaicite:4]{index=4}<br>
+    ※きんぽめ側の計算では「ポイント還元分も値引」とみなす旨の注意があります。 :contentReference[oaicite:5]{index=5}
+  </div>
 </div>
 
 <script>
   const $ = (id) => document.getElementById(id);
 
-  // name -> node の辞書（genres.jsonの内容をここに保持）
-  let GENRES = {};
-  // points の配列（points.json）
-  let POINTS = [];
-
-  function setPointsOptions() {
-    const sel = $("points");
-    sel.innerHTML = "";
-    for (const p of POINTS) {
-      const opt = document.createElement("option");
-      opt.textContent = p.label;
-      opt.value = p.rh || "";
-      sel.appendChild(opt);
-    }
-    if (!POINTS.length) {
-      const opt = document.createElement("option");
-      opt.textContent = "指定なし";
-      opt.value = "";
-      sel.appendChild(opt);
-    }
-  }
-
-  function setGenreDatalist() {
-    const dl = $("genreList");
-    dl.innerHTML = "";
-    for (const name of Object.keys(GENRES)) {
-      const opt = document.createElement("option");
-      opt.value = name;
-      dl.appendChild(opt);
-    }
-  }
-
-  function getSelectedNode() {
-    const name = $("genreSearch").value.trim();
-    if (!name) return ""; // 未指定はKindle本トップで探す
-    return GENRES[name] ? String(GENRES[name]) : ""; // 見つからない場合は未指定扱い
-  }
-
   function buildUrl() {
-    const kw = $("kw").value.trim();
-    const node = getSelectedNode(); // "" なら n: を付けない
-    const pct = $("pct").value.trim();
-    const points = $("points").value.trim();
-    const price = $("price").value.trim();
-    const sort = $("sort").value.trim();
+    const base = new URL("https://kinpome.com/kindle-sale-search2/");
+    const params = {
+      cat: $("cat").value.trim(),
+      keyword: $("keyword").value.trim(),
+      ex: $("ex").value.trim(),
+      lpr: $("lpr").value.trim(),
+      hpr: $("hpr").value.trim(),
+      lprr: $("lprr").value.trim(),
+      hprr: $("hprr").value.trim(),
+      lptr: $("lptr").value.trim(),
+      hptr: $("hptr").value.trim(),
+      lrpr: $("lrpr").value.trim(),
+      hrpr: $("hrpr").value.trim(),
+      rds: "", // 必要なら追加
+      rde: "", // 必要なら追加
+      st: $("st").value.trim(),
+      hpro: "",
+      lpro: "",
+      hptr: $("hptr").value.trim(),
+      lptr: $("lptr").value.trim(),
+      hprr: $("hprr").value.trim(),
+      lprr: $("lprr").value.trim(),
+      hrpr: $("hrpr").value.trim(),
+      lrpr: $("lrpr").value.trim(),
+    };
 
-    const url = new URL("https://www.amazon.co.jp/s");
-    url.searchParams.set("i", "digital-text");
-    if (kw) url.searchParams.set("k", kw);
-
-    const rh = [];
-    if (node) rh.push(`n:${node}`);
-    if (points) rh.push(points);
-    if (price) rh.push(price);
-    if (rh.length) url.searchParams.set("rh", rh.join(","));
-    if (sort) url.searchParams.set("s", sort);
-    if (pct) url.searchParams.set("pct-off", pct);
-
-    return url.toString();
-  }
-
-  function updatePreview() {
-    $("preview").textContent = buildUrl();
-  }
-
-  async function loadJson(path) {
-    const res = await fetch(path, { cache: "no-store" });
-    if (!res.ok) throw new Error(`${path} が読み込めません（HTTP ${res.status}）`);
-    return await res.json();
-  }
-
-  async function init() {
-    try {
-      // genres.json: { "文学・評論": 2293143051, ... }
-      GENRES = await loadJson("./genres.json");
-      setGenreDatalist();
-    } catch (e) {
-      // ない場合でも動くようにする（最低限）
-      GENRES = { "Kindle本トップ": 2250738051 };
-      setGenreDatalist();
-      console.warn(e);
+    // 空は付けない（URL短く）
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== "") base.searchParams.set(k, v);
     }
-
-    try {
-      // points.json: [ { "label":"指定なし", "rh":"" }, { "label":"例：ポイント還元", "rh":"p_n_amazon_points_ratio:10476513051" } ]
-      POINTS = await loadJson("./points.json");
-      setPointsOptions();
-    } catch (e) {
-      POINTS = [{ label: "指定なし", rh: "" }];
-      setPointsOptions();
-      console.warn(e);
-    }
-
-    // 入力変更でプレビュー更新
-    ["kw","genreSearch","pct","points","price","sort"].forEach(id=>{
-      $(id).addEventListener("input", updatePreview);
-      $(id).addEventListener("change", updatePreview);
-    });
-    updatePreview();
-
-    $("go").addEventListener("click", () => {
-      const u = buildUrl();
-      const mode = $("openMode").value;
-      if (mode === "same") location.href = u;
-      else window.open(u, "_blank", "noopener,noreferrer");
-    });
-
-    $("copy").addEventListener("click", async () => {
-      const u = buildUrl();
-      try {
-        await navigator.clipboard.writeText(u);
-        alert("URLをコピーしました");
-      } catch {
-        prompt("コピーできない場合は手動でコピーしてください", u);
-      }
-    });
+    return base.toString();
   }
 
-  init();
+  function updatePreview(){ $("preview").textContent = buildUrl(); }
+
+  ["keyword","ex","cat","lpr","hpr","lprr","hprr","lptr","hptr","lrpr","hrpr","st"]
+    .forEach(id => { $(id).addEventListener("input", updatePreview); $(id).addEventListener("change", updatePreview); });
+
+  $("go").addEventListener("click", () => window.open(buildUrl(), "_blank", "noopener,noreferrer"));
+
+  $("copy").addEventListener("click", async () => {
+    const u = buildUrl();
+    try { await navigator.clipboard.writeText(u); alert("URLをコピーしました"); }
+    catch { prompt("コピーできない場合は手動でコピーしてください", u); }
+  });
+
+  updatePreview();
 </script>
 
 </body>
