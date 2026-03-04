@@ -1,31 +1,304 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-<meta charset="utf-8">
-<title>Kindle検索</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kindle セール検索（自分用）</title>
+  <style>
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; margin:0; padding:16px; max-width:860px;}
+    h1{font-size:20px; margin:0 0 12px;}
+    .card{border:1px solid #ddd; border-radius:14px; padding:14px; margin:12px 0;}
+    label{display:block; font-size:13px; margin:10px 0 6px; color:#333;}
+    input,select,button,textarea{width:100%; box-sizing:border-box; padding:10px; font-size:16px; border:1px solid #ccc; border-radius:10px; background:#fff;}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+    button{cursor:pointer;}
+    .muted{color:#666; font-size:12px; line-height:1.5;}
+    .pill{display:inline-block; padding:2px 8px; border:1px solid #ccc; border-radius:999px; font-size:12px; margin-left:6px; color:#444;}
+    code{background:#f6f6f6; padding:2px 6px; border-radius:6px;}
+    .btnrow{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+    .danger{border-color:#e0b4b4;}
+    .small{font-size:13px;}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+  </style>
 </head>
-
 <body>
+  <h1>Kindle セール検索（自分用） <span class="pill">GitHub Pages向け</span></h1>
 
-<h1>Kindleセール検索</h1>
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>キーワード（空でもOK：作者名/出版社名/作品名など）</label>
+        <input id="kw" placeholder="例：東野圭吾 / 技術評論社 / SQL" />
+      </div>
+      <div>
+        <label>カテゴリ（node）</label>
+        <select id="node"></select>
+      </div>
+    </div>
 
-<p>
-<a href="https://www.amazon.co.jp/s?i=digital-text&rh=n:2225257051,p_36:6400-44000&s=price-asc-rank">
-技術書セール
-</a>
-</p>
+    <div class="row3">
+      <div>
+        <label>割引率（pct-off）</label>
+        <select id="pct">
+          <option value="">指定なし</option>
+          <option value="30-">30%以上</option>
+          <option value="50-">50%以上</option>
+          <option value="70-">70%以上</option>
+          <option value="90-">90%以上</option>
+          <option value="30-50">30〜50%</option>
+          <option value="50-70">50〜70%</option>
+        </select>
+        <div class="muted">※Amazon検索URLに <code>pct-off=50-</code> のように付ける方式です。環境や検索条件によって効きが弱いことがあります。:contentReference[oaicite:2]{index=2}</div>
+      </div>
 
-<p>
-<a href="https://www.amazon.co.jp/s?i=digital-text&rh=n:2293145051,p_36:6400-44000&s=price-asc-rank">
-ミステリセール
-</a>
-</p>
+      <div>
+        <label>ポイント還元（p_n_amazon_points_ratio）</label>
+        <select id="pointsPreset">
+          <option value="">指定なし</option>
+          <!-- ユーザーが貼ってくれたID（例） -->
+          <option value="p_n_amazon_points_ratio:10476513051">還元フィルタ（例：10476513051）</option>
+        </select>
+        <div class="muted">※ポイント還元の“％ごとのID”はAmazon側の分類で変わることがあるので、必要なら下の「カスタム」に追加して増やせます。</div>
+      </div>
 
-<p>
-<a href="https://www.amazon.co.jp/s?i=digital-text&rh=n:2293163051,p_36:6400-44000&s=price-asc-rank">
-エッセイセール
-</a>
-</p>
+      <div>
+        <label>価格帯（p_36）</label>
+        <select id="price">
+          <option value="">指定なし</option>
+          <option value="p_36:-0">無料（0円）</option>
+          <option value="p_36:0-100000">〜1000円</option>
+          <option value="p_36:6400-44000">約64〜440円</option>
+          <option value="p_36:10000-">100円以上</option>
+        </select>
+      </div>
+    </div>
 
+    <div class="row">
+      <div>
+        <label>並び順（s）</label>
+        <select id="sort">
+          <option value="price-asc-rank">価格：安い順</option>
+          <option value="price-desc-rank">価格：高い順</option>
+          <option value="review-rank">評価が高い順</option>
+          <option value="exact-aware-popularity-rank">人気順</option>
+          <option value="date-desc-rank">新着順</option>
+        </select>
+      </div>
+      <div>
+        <label>開き方</label>
+        <select id="openMode">
+          <option value="newtab">新しいタブで開く</option>
+          <option value="same">このタブで開く</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button id="go">Amazonで検索</button>
+      <button id="copy" class="danger">URLをコピー</button>
+    </div>
+
+    <p class="muted">
+      ※「Kindle Unlimitedを除外」はAmazon検索の仕様上、確実な除外フィルタがありません（KU対象本が“購入できるKindle本”として普通に混ざります）。  
+      KU“だけ”に絞るなら <code>p_n_feature_nineteen_browse-bin:3169286051</code> で可能ですが今回は入れていません。:contentReference[oaicite:3]{index=3}
+    </p>
+  </div>
+
+  <div class="card">
+    <h2 class="small" style="margin:0 0 8px;">カテゴリ/ポイント還元プリセットを自分で増やす</h2>
+
+    <label>カテゴリ一覧（編集OK）</label>
+    <textarea id="cats" rows="8" class="mono"></textarea>
+    <div class="muted">
+      形式：<code>{"表示名": カテゴリID, ...}</code><br>
+      例：文芸=2293143051、ミステリ=2293145051、エッセイ=2293163051、IT=2225257051、漫画=2278488051、ラノベ=2275256051
+    </div>
+
+    <label style="margin-top:12px;">ポイント還元プリセット（任意で追加）</label>
+    <textarea id="pointPresets" rows="5" class="mono"></textarea>
+    <div class="muted">
+      形式：<code>{"表示名":"p_n_amazon_points_ratio:ID", ...}</code><br>
+      追加方法：Amazonでポイント還元フィルタを選んだ検索結果URLから <code>p_n_amazon_points_ratio:XXXX</code> を拾ってここに登録。
+    </div>
+
+    <div class="btnrow">
+      <button id="save">保存（この端末に記憶）</button>
+      <button id="reset" class="danger">初期状態に戻す</button>
+    </div>
+  </div>
+
+<script>
+  // ====== 初期データ ======
+  const DEFAULT_CATS = {
+    "Kindle本トップ": 2250738051,
+    "コンピュータ・IT": 2225257051,
+    "ビジネス・経済": 2225277051,
+    "文芸（文学・評論）": 2293143051,
+    "ミステリー・サスペンス": 2293145051,
+    "エッセイ・随筆": 2293163051,
+    "漫画": 2278488051,
+    "ライトノベル": 2275256051
+  };
+
+  // ユーザーが貼ってくれた例IDを初期登録（表示名は自由に変えてOK）
+  const DEFAULT_POINT_PRESETS = {
+    "指定なし": "",
+    "ポイント還元フィルタ（例：10476513051）": "p_n_amazon_points_ratio:10476513051"
+  };
+
+  const LS_KEY = "kindle_sale_builder_v1";
+
+  const $ = (id) => document.getElementById(id);
+
+  function loadState(){
+    try{
+      return JSON.parse(localStorage.getItem(LS_KEY)) || null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function saveState(state){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+
+  function setOptions(selectEl, options, selectedValue){
+    selectEl.innerHTML = "";
+    for(const [label, value] of options){
+      const opt = document.createElement("option");
+      opt.textContent = label;
+      opt.value = value;
+      selectEl.appendChild(opt);
+    }
+    if(selectedValue !== undefined) selectEl.value = selectedValue;
+  }
+
+  function init(){
+    const state = loadState();
+
+    const cats = state?.cats || DEFAULT_CATS;
+    const points = state?.points || DEFAULT_POINT_PRESETS;
+
+    // populate category dropdown
+    const catOptions = Object.entries(cats).map(([name, id]) => [name, String(id)]);
+    setOptions($("node"), catOptions);
+
+    // points dropdown
+    const pointOptions = Object.entries(points).map(([name, v]) => [name, v]);
+    setOptions($("pointsPreset"), pointOptions);
+
+    // textareas
+    $("cats").value = JSON.stringify(cats, null, 2);
+    $("pointPresets").value = JSON.stringify(points, null, 2);
+
+    // restore last inputs
+    if(state?.last){
+      $("kw").value = state.last.kw || "";
+      $("node").value = state.last.node || $("node").value;
+      $("pct").value = state.last.pct || "";
+      $("pointsPreset").value = state.last.pointsPreset || "";
+      $("price").value = state.last.price || "";
+      $("sort").value = state.last.sort || "price-asc-rank";
+      $("openMode").value = state.last.openMode || "newtab";
+    }
+  }
+
+  function buildUrl(){
+    const kw = $("kw").value.trim();
+    const node = $("node").value.trim();
+    const pct = $("pct").value.trim();
+    const points = $("pointsPreset").value.trim();
+    const price = $("price").value.trim();
+    const sort = $("sort").value.trim();
+
+    // Amazon検索（Kindle本）
+    const url = new URL("https://www.amazon.co.jp/s");
+    url.searchParams.set("i", "digital-text");
+
+    if(kw) url.searchParams.set("k", kw);
+
+    // rh 条件を積む（カンマ区切り）
+    const rh = [];
+    if(node) rh.push(`n:${node}`);
+    if(points) rh.push(points);
+    if(price) rh.push(price);
+
+    if(rh.length) url.searchParams.set("rh", rh.join(","));
+    if(sort) url.searchParams.set("s", sort);
+
+    // 割引率（pct-off）を付与
+    // 例: pct-off=50- (50%以上) / pct-off=30-50 (範囲)
+    if(pct) url.searchParams.set("pct-off", pct);
+
+    return url.toString();
+  }
+
+  function persistLast(){
+    const prev = loadState() || {};
+    prev.last = {
+      kw: $("kw").value,
+      node: $("node").value,
+      pct: $("pct").value,
+      pointsPreset: $("pointsPreset").value,
+      price: $("price").value,
+      sort: $("sort").value,
+      openMode: $("openMode").value
+    };
+    prev.cats = JSON.parse($("cats").value);
+    prev.points = JSON.parse($("pointPresets").value);
+    saveState(prev);
+  }
+
+  $("go").addEventListener("click", () => {
+    const u = buildUrl();
+    persistLast();
+    const mode = $("openMode").value;
+    if(mode === "same"){
+      location.href = u;
+    }else{
+      window.open(u, "_blank", "noopener,noreferrer");
+    }
+  });
+
+  $("copy").addEventListener("click", async () => {
+    const u = buildUrl();
+    persistLast();
+    try{
+      await navigator.clipboard.writeText(u);
+      alert("URLをコピーしました");
+    }catch(e){
+      prompt("コピーできない場合は手動でコピーしてください", u);
+    }
+  });
+
+  $("save").addEventListener("click", () => {
+    try{
+      const cats = JSON.parse($("cats").value);
+      const points = JSON.parse($("pointPresets").value);
+
+      const state = loadState() || {};
+      state.cats = cats;
+      state.points = points;
+      state.last = state.last || {};
+      saveState(state);
+
+      // refresh selects
+      setOptions($("node"), Object.entries(cats).map(([n,id])=>[n,String(id)]), $("node").value);
+      setOptions($("pointsPreset"), Object.entries(points).map(([n,v])=>[n,v]), $("pointsPreset").value);
+
+      alert("保存しました（この端末のブラウザに記憶しました）");
+    }catch(e){
+      alert("JSONの形式が壊れています。カンマや引用符を確認してください。");
+    }
+  });
+
+  $("reset").addEventListener("click", () => {
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  });
+
+  init();
+</script>
 </body>
 </html>
