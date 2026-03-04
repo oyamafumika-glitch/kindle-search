@@ -3,45 +3,85 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kindle セール検索（自分用）</title>
+  <title>Kindle セール検索（完成版）</title>
+  <meta name="description" content="割引率・カテゴリ・ポイント還元でKindleセールを探す自分用ツール（GitHub Pages用）" />
   <style>
-    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; margin:0; padding:16px; max-width:860px;}
-    h1{font-size:20px; margin:0 0 12px;}
-    .card{border:1px solid #ddd; border-radius:14px; padding:14px; margin:12px 0;}
-    label{display:block; font-size:13px; margin:10px 0 6px; color:#333;}
-    input,select,button,textarea{width:100%; box-sizing:border-box; padding:10px; font-size:16px; border:1px solid #ccc; border-radius:10px; background:#fff;}
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
-    button{cursor:pointer;}
-    .muted{color:#666; font-size:12px; line-height:1.5;}
-    .pill{display:inline-block; padding:2px 8px; border:1px solid #ccc; border-radius:999px; font-size:12px; margin-left:6px; color:#444;}
-    code{background:#f6f6f6; padding:2px 6px; border-radius:6px;}
-    .btnrow{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
-    .danger{border-color:#e0b4b4;}
-    .small{font-size:13px;}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+    :root{
+      --b:#d9d9d9; --bg:#fff; --bg2:#f6f6f6; --t:#111; --m:#666;
+      --r:14px; --pad:14px; --gap:10px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:18px;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+      color:var(--t); background:var(--bg);
+      max-width:980px;
+    }
+    h1{font-size:20px; margin:0 0 10px;}
+    h2{font-size:15px; margin:0 0 8px;}
+    .muted{color:var(--m); font-size:12px; line-height:1.55}
+    .card{
+      border:1px solid var(--b); border-radius:var(--r);
+      padding:var(--pad); margin:12px 0; background:#fff;
+    }
+    label{display:block; font-size:13px; margin:10px 0 6px;}
+    input,select,button,textarea{
+      width:100%; padding:10px; font-size:16px;
+      border:1px solid #cfcfcf; border-radius:12px; background:#fff;
+    }
+    textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:13px;}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:var(--gap);}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--gap);}
+    .btnrow{display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); margin-top:12px;}
+    button{cursor:pointer; border:1px solid #bbb; background:#fff;}
+    button.primary{background:#111; color:#fff; border-color:#111;}
+    button.ghost{background:var(--bg2);}
+    button.danger{border-color:#e0b4b4;}
+    .pill{display:inline-block; padding:2px 8px; border:1px solid var(--b); border-radius:999px; font-size:12px; color:#444; margin-left:6px;}
+    .gridBtns{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;}
+    .gridBtns button{padding:10px; font-size:14px;}
+    code{background:var(--bg2); padding:2px 6px; border-radius:8px;}
+    details{border:1px dashed var(--b); border-radius:12px; padding:10px;}
+    summary{cursor:pointer; font-weight:600;}
+    .tiny{font-size:11px; color:var(--m)}
+    .preview{
+      border:1px solid var(--b); border-radius:12px; padding:10px;
+      background:var(--bg2); overflow:auto;
+    }
+    .right{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+    @media (max-width:820px){
+      body{padding:14px}
+      .row,.row3,.btnrow,.gridBtns{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <h1>Kindle セール検索（自分用） <span class="pill">GitHub Pages向け</span></h1>
+
+  <div class="right">
+    <h1>Kindle セール検索 <span class="pill">完成版</span></h1>
+    <div class="tiny">GitHub Pages / 1ファイル完結</div>
+  </div>
 
   <div class="card">
+    <h2>検索条件</h2>
+
     <div class="row">
       <div>
-        <label>キーワード（空でもOK：作者名/出版社名/作品名など）</label>
-        <input id="kw" placeholder="例：東野圭吾 / 技術評論社 / SQL" />
+        <label>キーワード（作者名/出版社名/作品名など）</label>
+        <input id="kw" placeholder="例：東野圭吾 / 技術評論社 / データ分析" />
       </div>
       <div>
-        <label>カテゴリ（node）</label>
+        <label>カテゴリ</label>
         <select id="node"></select>
       </div>
     </div>
 
     <div class="row3">
       <div>
-        <label>割引率（pct-off）</label>
+        <label>割引率</label>
         <select id="pct">
           <option value="">指定なし</option>
+          <option value="10-">10%以上</option>
           <option value="30-">30%以上</option>
           <option value="50-">50%以上</option>
           <option value="70-">70%以上</option>
@@ -49,21 +89,17 @@
           <option value="30-50">30〜50%</option>
           <option value="50-70">50〜70%</option>
         </select>
-        <div class="muted">※Amazon検索URLに <code>pct-off=50-</code> のように付ける方式です。環境や検索条件によって効きが弱いことがあります。:contentReference[oaicite:2]{index=2}</div>
+        <div class="muted">※URLに <code>pct-off=50-</code> 形式で付与（Amazon側の都合で効きが弱い検索もあります）。</div>
       </div>
 
       <div>
-        <label>ポイント還元（p_n_amazon_points_ratio）</label>
-        <select id="pointsPreset">
-          <option value="">指定なし</option>
-          <!-- ユーザーが貼ってくれたID（例） -->
-          <option value="p_n_amazon_points_ratio:10476513051">還元フィルタ（例：10476513051）</option>
-        </select>
-        <div class="muted">※ポイント還元の“％ごとのID”はAmazon側の分類で変わることがあるので、必要なら下の「カスタム」に追加して増やせます。</div>
+        <label>ポイント還元</label>
+        <select id="points"></select>
+        <div class="muted">※必要なら下の「編集」から追加できます。</div>
       </div>
 
       <div>
-        <label>価格帯（p_36）</label>
+        <label>価格帯</label>
         <select id="price">
           <option value="">指定なし</option>
           <option value="p_36:-0">無料（0円）</option>
@@ -76,7 +112,7 @@
 
     <div class="row">
       <div>
-        <label>並び順（s）</label>
+        <label>並び順</label>
         <select id="sort">
           <option value="price-asc-rank">価格：安い順</option>
           <option value="price-desc-rank">価格：高い順</option>
@@ -95,41 +131,68 @@
     </div>
 
     <div class="btnrow">
-      <button id="go">Amazonで検索</button>
-      <button id="copy" class="danger">URLをコピー</button>
+      <button class="primary" id="go">Amazonで開く</button>
+      <button class="ghost" id="copy">URLをコピー</button>
     </div>
 
-    <p class="muted">
-      ※「Kindle Unlimitedを除外」はAmazon検索の仕様上、確実な除外フィルタがありません（KU対象本が“購入できるKindle本”として普通に混ざります）。  
-      KU“だけ”に絞るなら <code>p_n_feature_nineteen_browse-bin:3169286051</code> で可能ですが今回は入れていません。:contentReference[oaicite:3]{index=3}
-    </p>
+    <div style="margin-top:10px" class="muted">
+      ・KUは「入れない」設計（KUのみ絞り込みパラメータは未使用）。ただしAmazon検索の仕様上、結果からKU対象本を完全除外はできません。<br>
+      ・「セール」判定は、割引率・価格帯・ポイント還元などの条件で“セールっぽい集合”を作る方式です（Amazon公式に「セールだけ」除外/抽出の共通スイッチがないため）。
+    </div>
+
+    <label style="margin-top:12px;">生成URL（プレビュー）</label>
+    <div class="preview mono" id="preview"></div>
   </div>
 
   <div class="card">
-    <h2 class="small" style="margin:0 0 8px;">カテゴリ/ポイント還元プリセットを自分で増やす</h2>
+    <h2>ワンタップ（よく使う条件）</h2>
+    <div class="muted">※あなたの使い方に合わせて下の「編集」でボタン内容も増やせます。</div>
 
-    <label>カテゴリ一覧（編集OK）</label>
-    <textarea id="cats" rows="8" class="mono"></textarea>
-    <div class="muted">
-      形式：<code>{"表示名": カテゴリID, ...}</code><br>
-      例：文芸=2293143051、ミステリ=2293145051、エッセイ=2293163051、IT=2225257051、漫画=2278488051、ラノベ=2275256051
-    </div>
+    <div class="gridBtns">
+      <button data-preset="it50">IT × 50%以上</button>
+      <button data-preset="bun50">文芸 × 50%以上</button>
+      <button data-preset="myst50">ミステリ × 50%以上</button>
 
-    <label style="margin-top:12px;">ポイント還元プリセット（任意で追加）</label>
-    <textarea id="pointPresets" rows="5" class="mono"></textarea>
-    <div class="muted">
-      形式：<code>{"表示名":"p_n_amazon_points_ratio:ID", ...}</code><br>
-      追加方法：Amazonでポイント還元フィルタを選んだ検索結果URLから <code>p_n_amazon_points_ratio:XXXX</code> を拾ってここに登録。
-    </div>
+      <button data-preset="essay50">エッセイ × 50%以上</button>
+      <button data-preset="manga50">漫画 × 50%以上</button>
+      <button data-preset="all70">全体 × 70%以上</button>
 
-    <div class="btnrow">
-      <button id="save">保存（この端末に記憶）</button>
-      <button id="reset" class="danger">初期状態に戻す</button>
+      <button data-preset="allpts">ポイント還元あり</button>
+      <button data-preset="under1000">〜1000円</button>
+      <button data-preset="free">無料</button>
     </div>
   </div>
 
+  <div class="card">
+    <details>
+      <summary>編集（カテゴリ / ポイント還元 / ボタン）</summary>
+
+      <p class="muted">
+        ここを書き換えて「保存」すると、この端末のブラウザに記憶します。<br>
+        ポイント還元は、Amazonでポイント還元を選んだ検索結果URLから <code>p_n_amazon_points_ratio:XXXX</code> を拾って追加するのが確実です。
+      </p>
+
+      <label>カテゴリ（JSON）</label>
+      <textarea id="cats" rows="10"></textarea>
+
+      <label style="margin-top:10px;">ポイント還元プリセット（JSON）</label>
+      <textarea id="pts" rows="7"></textarea>
+
+      <label style="margin-top:10px;">ワンタップボタン（JSON）</label>
+      <textarea id="presets" rows="12"></textarea>
+      <div class="muted">形式：<code>{"キー":{"label":"表示名","node":カテゴリID,"pct":"50-","price":"p_36:0-100000","points":"p_n_amazon_points_ratio:XXXX","sort":"price-asc-rank"}}</code></div>
+
+      <div class="btnrow">
+        <button id="save">保存（この端末に記憶）</button>
+        <button class="danger" id="reset">初期状態に戻す</button>
+      </div>
+    </details>
+  </div>
+
 <script>
-  // ====== 初期データ ======
+  // =======================
+  // 初期データ（ここを好みにしてもOK）
+  // =======================
   const DEFAULT_CATS = {
     "Kindle本トップ": 2250738051,
     "コンピュータ・IT": 2225257051,
@@ -141,158 +204,237 @@
     "ライトノベル": 2275256051
   };
 
-  // ユーザーが貼ってくれた例IDを初期登録（表示名は自由に変えてOK）
-  const DEFAULT_POINT_PRESETS = {
+  // あなたが貼ってくれたIDを初期登録（必要ならここを増やす/編集）
+  const DEFAULT_POINTS = {
     "指定なし": "",
-    "ポイント還元フィルタ（例：10476513051）": "p_n_amazon_points_ratio:10476513051"
+    "ポイント還元（例：10476513051）": "p_n_amazon_points_ratio:10476513051"
   };
 
-  const LS_KEY = "kindle_sale_builder_v1";
+  // ワンタップ定義（keyは任意）
+  const DEFAULT_PRESETS = {
+    "it50":    { "label":"IT × 50%以上",       "node":2225257051, "pct":"50-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "bun50":   { "label":"文芸 × 50%以上",     "node":2293143051, "pct":"50-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "myst50":  { "label":"ミステリ × 50%以上", "node":2293145051, "pct":"50-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "essay50": { "label":"エッセイ × 50%以上", "node":2293163051, "pct":"50-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "manga50": { "label":"漫画 × 50%以上",     "node":2278488051, "pct":"50-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "all70":   { "label":"全体 × 70%以上",     "node":2250738051, "pct":"70-", "price":"",              "points":"", "sort":"price-asc-rank" },
+    "allpts":  { "label":"ポイント還元あり",   "node":2250738051, "pct":"",    "price":"",              "points":"p_n_amazon_points_ratio:10476513051", "sort":"price-asc-rank" },
+    "under1000":{ "label":"〜1000円",          "node":2250738051, "pct":"",    "price":"p_36:0-100000",  "points":"", "sort":"price-asc-rank" },
+    "free":    { "label":"無料",               "node":2250738051, "pct":"",    "price":"p_36:-0",        "points":"", "sort":"price-asc-rank" }
+  };
 
+  const LS_KEY = "kindle_sale_builder_complete_v1";
   const $ = (id) => document.getElementById(id);
 
+  function safeParseJson(str){
+    try { return JSON.parse(str); } catch { return null; }
+  }
+
   function loadState(){
-    try{
-      return JSON.parse(localStorage.getItem(LS_KEY)) || null;
-    }catch(e){
-      return null;
-    }
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
   }
 
   function saveState(state){
     localStorage.setItem(LS_KEY, JSON.stringify(state));
   }
 
-  function setOptions(selectEl, options, selectedValue){
+  function setSelectOptions(selectEl, entries, selectedValue){
     selectEl.innerHTML = "";
-    for(const [label, value] of options){
+    for(const [label, value] of entries){
       const opt = document.createElement("option");
       opt.textContent = label;
       opt.value = value;
       selectEl.appendChild(opt);
     }
-    if(selectedValue !== undefined) selectEl.value = selectedValue;
+    if(selectedValue !== undefined && selectedValue !== null) selectEl.value = selectedValue;
+  }
+
+  function buildUrlFromInputs(overrides = {}){
+    const kw    = (overrides.kw ?? $("kw").value).trim();
+    const node  = String(overrides.node ?? $("node").value).trim();
+    const pct   = (overrides.pct ?? $("pct").value).trim();
+    const points= (overrides.points ?? $("points").value).trim();
+    const price = (overrides.price ?? $("price").value).trim();
+    const sort  = (overrides.sort ?? $("sort").value).trim();
+
+    const url = new URL("https://www.amazon.co.jp/s");
+    url.searchParams.set("i", "digital-text");
+
+    if(kw) url.searchParams.set("k", kw);
+
+    const rh = [];
+    if(node) rh.push(`n:${node}`);
+    if(points) rh.push(points);
+    if(price) rh.push(price);
+    if(rh.length) url.searchParams.set("rh", rh.join(","));
+    if(sort) url.searchParams.set("s", sort);
+
+    if(pct) url.searchParams.set("pct-off", pct);
+
+    return url.toString();
+  }
+
+  function updatePreview(){
+    $("preview").textContent = buildUrlFromInputs();
   }
 
   function init(){
     const state = loadState();
 
     const cats = state?.cats || DEFAULT_CATS;
-    const points = state?.points || DEFAULT_POINT_PRESETS;
+    const pts  = state?.points || DEFAULT_POINTS;
+    const presets = state?.presets || DEFAULT_PRESETS;
+    const last = state?.last || {};
 
-    // populate category dropdown
-    const catOptions = Object.entries(cats).map(([name, id]) => [name, String(id)]);
-    setOptions($("node"), catOptions);
+    // カテゴリ select
+    setSelectOptions(
+      $("node"),
+      Object.entries(cats).map(([n,id]) => [n, String(id)]),
+      last.node || String(DEFAULT_CATS["Kindle本トップ"])
+    );
 
-    // points dropdown
-    const pointOptions = Object.entries(points).map(([name, v]) => [name, v]);
-    setOptions($("pointsPreset"), pointOptions);
+    // ポイント select
+    setSelectOptions(
+      $("points"),
+      Object.entries(pts).map(([n,v]) => [n, v]),
+      last.points || ""
+    );
 
-    // textareas
+    // 入力復元
+    $("kw").value = last.kw || "";
+    $("pct").value = last.pct || "";
+    $("price").value = last.price || "";
+    $("sort").value = last.sort || "price-asc-rank";
+    $("openMode").value = last.openMode || "newtab";
+
+    // 編集欄に反映
     $("cats").value = JSON.stringify(cats, null, 2);
-    $("pointPresets").value = JSON.stringify(points, null, 2);
+    $("pts").value = JSON.stringify(pts, null, 2);
+    $("presets").value = JSON.stringify(presets, null, 2);
 
-    // restore last inputs
-    if(state?.last){
-      $("kw").value = state.last.kw || "";
-      $("node").value = state.last.node || $("node").value;
-      $("pct").value = state.last.pct || "";
-      $("pointsPreset").value = state.last.pointsPreset || "";
-      $("price").value = state.last.price || "";
-      $("sort").value = state.last.sort || "price-asc-rank";
-      $("openMode").value = state.last.openMode || "newtab";
-    }
-  }
+    // ワンタップのラベル更新（表示だけ）
+    document.querySelectorAll("button[data-preset]").forEach(btn => {
+      const key = btn.getAttribute("data-preset");
+      if(presets[key]?.label) btn.textContent = presets[key].label;
+    });
 
-  function buildUrl(){
-    const kw = $("kw").value.trim();
-    const node = $("node").value.trim();
-    const pct = $("pct").value.trim();
-    const points = $("pointsPreset").value.trim();
-    const price = $("price").value.trim();
-    const sort = $("sort").value.trim();
-
-    // Amazon検索（Kindle本）
-    const url = new URL("https://www.amazon.co.jp/s");
-    url.searchParams.set("i", "digital-text");
-
-    if(kw) url.searchParams.set("k", kw);
-
-    // rh 条件を積む（カンマ区切り）
-    const rh = [];
-    if(node) rh.push(`n:${node}`);
-    if(points) rh.push(points);
-    if(price) rh.push(price);
-
-    if(rh.length) url.searchParams.set("rh", rh.join(","));
-    if(sort) url.searchParams.set("s", sort);
-
-    // 割引率（pct-off）を付与
-    // 例: pct-off=50- (50%以上) / pct-off=30-50 (範囲)
-    if(pct) url.searchParams.set("pct-off", pct);
-
-    return url.toString();
+    updatePreview();
   }
 
   function persistLast(){
-    const prev = loadState() || {};
-    prev.last = {
+    const state = loadState() || {};
+    state.last = {
       kw: $("kw").value,
       node: $("node").value,
       pct: $("pct").value,
-      pointsPreset: $("pointsPreset").value,
+      points: $("points").value,
       price: $("price").value,
       sort: $("sort").value,
       openMode: $("openMode").value
     };
-    prev.cats = JSON.parse($("cats").value);
-    prev.points = JSON.parse($("pointPresets").value);
-    saveState(prev);
+    saveState(state);
   }
 
-  $("go").addEventListener("click", () => {
-    const u = buildUrl();
-    persistLast();
+  function openUrl(url){
     const mode = $("openMode").value;
-    if(mode === "same"){
-      location.href = u;
-    }else{
-      window.open(u, "_blank", "noopener,noreferrer");
-    }
+    if(mode === "same") location.href = url;
+    else window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  // 入力変更でプレビュー更新
+  ["kw","node","pct","points","price","sort"].forEach(id => {
+    $(id).addEventListener("input", updatePreview);
+    $(id).addEventListener("change", updatePreview);
   });
 
+  // 検索
+  $("go").addEventListener("click", () => {
+    const url = buildUrlFromInputs();
+    persistLast();
+    openUrl(url);
+  });
+
+  // URLコピー
   $("copy").addEventListener("click", async () => {
-    const u = buildUrl();
+    const url = buildUrlFromInputs();
     persistLast();
     try{
-      await navigator.clipboard.writeText(u);
+      await navigator.clipboard.writeText(url);
       alert("URLをコピーしました");
-    }catch(e){
-      prompt("コピーできない場合は手動でコピーしてください", u);
+    }catch{
+      prompt("コピーできない場合は手動でコピーしてください", url);
     }
   });
 
-  $("save").addEventListener("click", () => {
-    try{
-      const cats = JSON.parse($("cats").value);
-      const points = JSON.parse($("pointPresets").value);
-
+  // ワンタップ
+  document.querySelectorAll("button[data-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
       const state = loadState() || {};
-      state.cats = cats;
-      state.points = points;
-      state.last = state.last || {};
-      saveState(state);
+      const presets = state.presets || DEFAULT_PRESETS;
 
-      // refresh selects
-      setOptions($("node"), Object.entries(cats).map(([n,id])=>[n,String(id)]), $("node").value);
-      setOptions($("pointsPreset"), Object.entries(points).map(([n,v])=>[n,v]), $("pointsPreset").value);
+      const key = btn.getAttribute("data-preset");
+      const p = presets[key] || DEFAULT_PRESETS[key];
+      if(!p){ alert("プリセットが見つかりません"); return; }
 
-      alert("保存しました（この端末のブラウザに記憶しました）");
-    }catch(e){
-      alert("JSONの形式が壊れています。カンマや引用符を確認してください。");
-    }
+      // 入力欄にも反映（キーワードは維持）
+      $("node").value = String(p.node ?? $("node").value);
+      $("pct").value = p.pct ?? "";
+      $("price").value = p.price ?? "";
+      $("sort").value = p.sort ?? "price-asc-rank";
+
+      // pointsはプリセットにあれば反映、なければ維持
+      if(p.points !== undefined) $("points").value = p.points;
+
+      updatePreview();
+
+      const url = buildUrlFromInputs({
+        node: p.node,
+        pct: p.pct,
+        price: p.price,
+        points: (p.points !== undefined ? p.points : $("points").value),
+        sort: p.sort
+      });
+
+      persistLast();
+      openUrl(url);
+    });
   });
 
+  // 保存（編集）
+  $("save").addEventListener("click", () => {
+    const cats = safeParseJson($("cats").value);
+    const pts  = safeParseJson($("pts").value);
+    const presets = safeParseJson($("presets").value);
+
+    if(!cats || !pts || !presets){
+      alert("JSONの形式が壊れています。カンマや引用符を確認してください。");
+      return;
+    }
+
+    const state = loadState() || {};
+    state.cats = cats;
+    state.points = pts;
+    state.presets = presets;
+    state.last = state.last || {};
+    saveState(state);
+
+    // select更新
+    setSelectOptions($("node"), Object.entries(cats).map(([n,id]) => [n, String(id)]), $("node").value);
+    setSelectOptions($("points"), Object.entries(pts).map(([n,v]) => [n, v]), $("points").value);
+
+    // ラベル更新
+    document.querySelectorAll("button[data-preset]").forEach(btn => {
+      const key = btn.getAttribute("data-preset");
+      if(presets[key]?.label) btn.textContent = presets[key].label;
+    });
+
+    alert("保存しました（この端末のブラウザに記憶しました）");
+    updatePreview();
+  });
+
+  // 初期化
   $("reset").addEventListener("click", () => {
     localStorage.removeItem(LS_KEY);
     location.reload();
@@ -300,5 +442,6 @@
 
   init();
 </script>
+
 </body>
 </html>
